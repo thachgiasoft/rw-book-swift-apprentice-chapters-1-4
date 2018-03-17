@@ -35,9 +35,13 @@ func distance(from source: Location, to target: Location) -> Double {
     return sqrt(distanceX * distanceX + distanceY * distanceY)
 }
 
-struct DeliveryArea {
+struct DeliveryArea: CustomStringConvertible {
     var range: Double
     let center: Location
+    
+    var description: String {
+        return "Area with range: \(range), location: x: \(center.x) - y: \(center.y)"
+    }
     
     func contains(_ location: Location) -> Bool {
         let distanceFromCenter =
@@ -81,3 +85,95 @@ let area1 = DeliveryArea(range: 2.5, center: Location(x: 2, y: 4))
 let area2 = DeliveryArea(range: 2.5, center: Location(x: 2, y: 9))
 
 area1.overlaps(with: area2)
+print(area1)
+print(area2)
+
+// Challenges
+
+// 1
+
+typealias BoardPiece = String
+let X: BoardPiece = "X"
+let O: BoardPiece = "O"
+
+struct Game {
+    
+    // The game is a 3x3 grid of BoardPieces. Nil means it's an empty position
+    var board: [BoardPiece?] = [nil, nil, nil,
+                                nil, nil, nil,
+                                nil, nil, nil]
+    
+    // Start with a current player, either O or X
+    var currentPlayer = O
+    
+    // Compute and return the winner of the game. If there is no winner, return nil.
+    var winner: BoardPiece? {
+        
+        let winningCombinations = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 4, 8], [2, 4, 6], [0, 3, 6], [1, 4, 7],  [2, 5, 8]]
+        
+        for combination in winningCombinations {
+            let result = combination.map { board[$0] }
+            if result.filter({$0 == X}).count == 3 {
+                return X
+            }
+            if result.filter({$0 == O}).count == 3 {
+                return O
+            }
+        }
+        return nil
+    }
+    
+    // Return true if all the board positions are filled and there is a winner
+    var isFinished: Bool {
+        return winner != nil || !board.contains { $0 == nil }
+    }
+    
+    // Set the position to the current players board piece. If the position
+    // is invalid there is already a piece at the position, return without doing
+    // anything. Toggle the current player.
+    mutating func processSelection(position: Int) {
+        if position < 0 || position > board.count {
+            return
+        }
+        if board[position] != nil {
+            return
+        }
+        board[position] = currentPlayer
+        currentPlayer = currentPlayer == X ? O : X
+    }
+    
+    // Print an ASCII representation of the board.
+    func printBoard() {
+        print()
+        print(" \(board[0] ?? " ") | \(board[1] ?? " ") | \(board[2] ?? " ") ")
+        print("-----------")
+        print(" \(board[3] ?? " ") | \(board[4] ?? " ") | \(board[5] ?? " ") ")
+        print("-----------")
+        print(" \(board[6] ?? " ") | \(board[7] ?? " ") | \(board[8] ?? " ") ")
+        print()
+    }
+}
+
+// Play a game
+
+var game = Game()
+
+print("Welcome to Tic-Tac-Toe!")
+game.printBoard()
+
+game.processSelection(position: 4)
+game.processSelection(position: 3)
+game.processSelection(position: 5)
+game.processSelection(position: 2)
+game.processSelection(position: 8)
+game.processSelection(position: 1)
+game.processSelection(position: 0)
+game.processSelection(position: 6)
+game.printBoard()
+
+print("Game over!")
+if let winner = game.winner {
+    print("The winner is player \(winner). Congradulations!")
+} else {
+    print("The game is tied. Try again!")
+}
