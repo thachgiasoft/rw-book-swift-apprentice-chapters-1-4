@@ -177,3 +177,61 @@ if let winner = game.winner {
 } else {
     print("The game is tied. Try again!")
 }
+
+// 2
+
+typealias Size = String
+let Small: Size = "Small"
+let Medium: Size = "Medium"
+let Large: Size = "Large"
+let XLarge: Size = "XLarge"
+
+typealias Material = String
+let Cotton: Material = "Cotton"
+let Polyester: Material = "Polyester"
+let Wool: Material = "Wool"
+
+typealias Color = String
+
+struct TShirt {
+    var size: Size
+    var color: Color
+    var material: Material
+    
+    func calculateCost() -> Double {
+        let base = 10.0
+        
+        var sizeMultiplier: Double
+        switch size {
+        case Small, Medium:
+            sizeMultiplier = 1.0
+        case Large, XLarge:
+            sizeMultiplier = 1.1
+        default:
+            // Special Order
+            sizeMultiplier = 1.2
+        }
+        
+        var materialMultiplier: Double
+        switch material {
+        case Cotton:
+            materialMultiplier = 1.0
+        case Polyester:
+            materialMultiplier = 1.1
+        case Wool:
+            materialMultiplier = 1.5
+        default:
+            // Special Order
+            materialMultiplier = 2.0
+        }
+        
+        return base * sizeMultiplier * materialMultiplier
+    }
+}
+
+print(TShirt(size: Medium, color: "Green", material: Cotton).calculateCost())
+print(TShirt(size: XLarge, color: "Grey", material: Wool).calculateCost())
+
+// 3
+
+
